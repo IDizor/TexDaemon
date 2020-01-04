@@ -342,25 +342,6 @@ namespace TexDaemon
             }
         }
 
-        private void dgrProcRegExps_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (dgrProcRegExps.SelectedCells.Count > 1)
-            {
-                object objCondition =   dgrProcRegExps.SelectedRows[0].Cells[0].Value;
-                object objRegEx =       dgrProcRegExps.SelectedRows[0].Cells[1].Value;
-                object objRegExSub =    dgrProcRegExps.SelectedRows[0].Cells[2].Value;
-                OperationEditor.txtCondition.Text = objCondition == null ? "" : objCondition.ToString();
-                OperationEditor.txtRegEx.Text = objRegEx == null ? "" : objRegEx.ToString();
-                OperationEditor.txtRegExSub.Text = objRegExSub == null ? "" : objRegExSub.ToString();
-                if (OperationEditor.ShowDialog() == DialogResult.OK)
-                {
-                    dgrProcRegExps.SelectedRows[0].Cells[0].Value = OperationEditor.txtCondition.Text;
-                    dgrProcRegExps.SelectedRows[0].Cells[1].Value = OperationEditor.txtRegEx.Text;
-                    dgrProcRegExps.SelectedRows[0].Cells[2].Value = OperationEditor.txtRegExSub.Text;
-                }
-            }
-        }
-
         private void txtSearchResults_TextChanged(object sender, EventArgs e)
         {
             lblSearchResults.Text = "Search results (" + txtSearchResults.Lines.Length + ") :";
@@ -745,6 +726,62 @@ namespace TexDaemon
         private void LblCurrentSettingsFile_TextChanged(object sender, EventArgs e)
         {
             btnSave.Visible = !String.IsNullOrEmpty(lblCurrentSettingsFile.Text);
+        }
+
+        private void DgrProcRegExps_RowHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                ctmGridRowMenu.Tag = e.RowIndex;
+                ctmGridRowMenu.Show(Cursor.Position);
+            }
+        }
+
+        private void DgrProcRegExps_RowHeaderMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                object objCondition = dgrProcRegExps.Rows[e.RowIndex].Cells[0].Value;
+                object objRegEx = dgrProcRegExps.Rows[e.RowIndex].Cells[1].Value;
+                object objRegExSub = dgrProcRegExps.Rows[e.RowIndex].Cells[2].Value;
+                OperationEditor.txtCondition.Text = objCondition == null ? "" : objCondition.ToString();
+                OperationEditor.txtRegEx.Text = objRegEx == null ? "" : objRegEx.ToString();
+                OperationEditor.txtRegExSub.Text = objRegExSub == null ? "" : objRegExSub.ToString();
+
+                if (OperationEditor.ShowDialog() == DialogResult.OK)
+                {
+                    dgrProcRegExps.Rows[e.RowIndex].Cells[0].Value = OperationEditor.txtCondition.Text;
+                    dgrProcRegExps.Rows[e.RowIndex].Cells[1].Value = OperationEditor.txtRegEx.Text;
+                    dgrProcRegExps.Rows[e.RowIndex].Cells[2].Value = OperationEditor.txtRegExSub.Text;
+                }
+            }
+        }
+
+        private void SwitchOperationFlag(int rowIndex, int cellIndex, string flag)
+        {
+            var objValue = dgrProcRegExps.Rows[rowIndex].Cells[cellIndex].Value;
+            var strValue = objValue == null ? "" : objValue.ToString();
+
+            if (strValue.StartsWith(flag))
+            {
+                strValue = strValue.Substring(flag.Length);
+            }
+            else
+            {
+                strValue = flag + strValue;
+            }
+
+            dgrProcRegExps.Rows[rowIndex].Cells[cellIndex].Value = strValue;
+        }
+
+        private void EnableDisableRowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SwitchOperationFlag((int)ctmGridRowMenu.Tag, 0, OperationFlags.RowDisabled);
+        }
+
+        private void JavascriptSubstitutionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SwitchOperationFlag((int)ctmGridRowMenu.Tag, 2, OperationFlags.Javascript);
         }
     }
 }

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
-using System.Xml.XPath;
 using Jint;
 
 namespace TexDaemon
@@ -79,6 +79,13 @@ namespace TexDaemon
                         foreach (DataGridViewRow row in BaseForm.dgrProcRegExps.Rows)
                         {
                             operationRegExCondition = row.Cells[0].Value == null ? string.Empty : row.Cells[0].Value.ToString();
+
+                            if (operationRegExCondition.StartsWith(OperationFlags.RowDisabled))
+                            {
+                                // skip operation
+                                continue;
+                            }
+
                             operationRegEx = row.Cells[1].Value == null ? string.Empty : row.Cells[1].Value.ToString();
                             operationRegExSub = row.Cells[2].Value == null ? string.Empty : row.Cells[2].Value.ToString();
 
@@ -109,7 +116,7 @@ namespace TexDaemon
                                 if (isMatchedCondition)
                                 {
                                     operationRegEx = ReplaceDoubleSpaces(operationRegEx);
-                                    ProcessText(ref textContent, operationRegEx, operationRegExSub);
+                                    ApplyOperation(ref textContent, operationRegEx, operationRegExSub);
                                 }
                             }
                         }
@@ -129,6 +136,10 @@ namespace TexDaemon
 
                             // save result
                             File.WriteAllText(filePath, updatedContent, fileEncoding);
+                        }
+                        else
+                        {
+                            BaseForm.Invoke(new Action(() => BaseForm.WriteLog($"No matches for file: \"{filePath}\". Skipped.")));
                         }
                     }
                     catch (Exception ex)
@@ -153,31 +164,62 @@ namespace TexDaemon
             Finished = true;
         }
 
-        private void ProcessText(ref StringBuilder textContent, string operationRegEx, string operationRegExSub)
+        private void ApplyOperation(ref StringBuilder textContent, string operationRegEx, string operationRegExSub)
         {
             var stringContent = textContent.ToString();
-            var isJS = operationRegExSub.StartsWith("js:");
+            var isJS = operationRegExSub.StartsWith(OperationFlags.Javascript);
             var shift = 0;
 
             if (isJS)
             {
-                operationRegExSub = operationRegExSub.Substring(3);
+                operationRegExSub = operationRegExSub.Substring(OperationFlags.Javascript.Length); // remove js flag
                 var matches = Regex.Matches(stringContent, operationRegEx, RegexOptions.IgnoreCase);
 
                 foreach (Match match in matches)
                 {
-                    if (match.Success)
-                    {
-                        var js = match.Result(operationRegExSub);
+                    var js = match.Result(operationRegExSub);
 
-                        // check if all placeholders populated
-                        if (!Regex.IsMatch(js, @"\$\d+"))
+                    // check if all placeholders populated
+                    if (!Regex.IsMatch(js, @"\$\d"))
+                    {
+                        var jsCompletionValue = JsEngine.Execute(js).GetCompletionValue();
+
+                        if (jsCompletionValue.IsArray())
                         {
-                            var jsResult = JsEngine.Execute(js).GetCompletionValue().ToString();
-                            textContent.Remove(match.Index + shift, match.Length);
-                            textContent.Insert(match.Index + shift, jsResult);
-                            shift = shift + jsResult.Length - match.Length;
+                            // replace matched groups only
+                            var strResults = jsCompletionValue.AsArray().GetOwnProperties()
+                                .Select(prop => prop.Value.Value.ToString())
+                                .ToArray();
+
+                            // match.Groups have 1 extra item (last one) and strResults have 1 extra item (first one).
+                            // so we can compare count as is: match.Groups.Count == strResults.Count
+                            if (match.Groups.Count > 1 && match.Groups.Count == strResults.Length)
+                            {
+                                for (int i = 1; i < match.Groups.Count; i++) // start skipping 1st group (it is whole match)
+                                {
+                                    textContent.Remove(match.Groups[i].Index + shift, match.Groups[i].Length);
+                                    textContent.Insert(match.Groups[i].Index + shift, strResults[i - 1]);
+                                    shift = shift + strResults[i - 1].Length - match.Groups[i].Length;
+                                }
+                            }
+                            else
+                            {
+                                BaseForm.Invoke(new Action(() => BaseForm.WriteLog($"Skipped operation regex: \"{operationRegEx}\". Matched groups count != substitutions count.")));
+                            }
                         }
+                        else
+                        {
+                            // replace whole match
+                            var strResult = jsCompletionValue.ToString();
+                            textContent.Remove(match.Index + shift, match.Length);
+                            textContent.Insert(match.Index + shift, strResult);
+                            shift = shift + strResult.Length - match.Length;
+                        }
+                            
+                    }
+                    else
+                    {
+                        BaseForm.Invoke(new Action(() => BaseForm.WriteLog($"Not all js substitution pleaceholders were populated during operation: \"{operationRegEx}\".")));
                     }
                 }
             }

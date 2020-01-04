@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DaemonForm));
             this.loadFileDialogLoad = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialogSave = new System.Windows.Forms.SaveFileDialog();
@@ -87,6 +87,9 @@
             this.mniSearchResultsSQLFill = new System.Windows.Forms.ToolStripMenuItem();
             this.mniFilterResultsByContent = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.ctmGridRowMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.enableDisableRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.javascriptSubstitutionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -108,6 +111,7 @@
             this.panel12.SuspendLayout();
             this.panel11.SuspendLayout();
             this.ctmSearchResultsMenu.SuspendLayout();
+            this.ctmGridRowMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // loadFileDialogLoad
@@ -422,24 +426,25 @@
             this.ConditionRegEx,
             this.RegEx,
             this.Substitution});
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgrProcRegExps.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgrProcRegExps.DefaultCellStyle = dataGridViewCellStyle5;
             this.dgrProcRegExps.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgrProcRegExps.Location = new System.Drawing.Point(12, 0);
             this.dgrProcRegExps.Name = "dgrProcRegExps";
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Lucida Console", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.dgrProcRegExps.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Lucida Console", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dgrProcRegExps.RowsDefaultCellStyle = dataGridViewCellStyle6;
             this.dgrProcRegExps.Size = new System.Drawing.Size(888, 270);
             this.dgrProcRegExps.TabIndex = 13;
             this.dgrProcRegExps.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgrProcRegExps_CellClick);
-            this.dgrProcRegExps.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgrProcRegExps_CellDoubleClick);
             this.dgrProcRegExps.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgrProcRegExps_CellValueChanged);
+            this.dgrProcRegExps.RowHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.DgrProcRegExps_RowHeaderMouseClick);
+            this.dgrProcRegExps.RowHeaderMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.DgrProcRegExps_RowHeaderMouseDoubleClick);
             // 
             // ConditionRegEx
             // 
@@ -680,6 +685,28 @@
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(169, 6);
             // 
+            // ctmGridRowMenu
+            // 
+            this.ctmGridRowMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.enableDisableRowToolStripMenuItem,
+            this.javascriptSubstitutionToolStripMenuItem});
+            this.ctmGridRowMenu.Name = "ctmGridRowMenu";
+            this.ctmGridRowMenu.Size = new System.Drawing.Size(193, 70);
+            // 
+            // enableDisableRowToolStripMenuItem
+            // 
+            this.enableDisableRowToolStripMenuItem.Name = "enableDisableRowToolStripMenuItem";
+            this.enableDisableRowToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.enableDisableRowToolStripMenuItem.Text = "Enable/Disable Row";
+            this.enableDisableRowToolStripMenuItem.Click += new System.EventHandler(this.EnableDisableRowToolStripMenuItem_Click);
+            // 
+            // javascriptSubstitutionToolStripMenuItem
+            // 
+            this.javascriptSubstitutionToolStripMenuItem.Name = "javascriptSubstitutionToolStripMenuItem";
+            this.javascriptSubstitutionToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.javascriptSubstitutionToolStripMenuItem.Text = "Javascript Substitution";
+            this.javascriptSubstitutionToolStripMenuItem.Click += new System.EventHandler(this.JavascriptSubstitutionToolStripMenuItem_Click);
+            // 
             // DaemonForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -721,6 +748,7 @@
             this.panel11.ResumeLayout(false);
             this.panel11.PerformLayout();
             this.ctmSearchResultsMenu.ResumeLayout(false);
+            this.ctmGridRowMenu.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -782,6 +810,9 @@
         public System.Windows.Forms.CheckBox BackupCheckBox;
         private System.Windows.Forms.ToolStripMenuItem mniCustomOperation;
         private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.ContextMenuStrip ctmGridRowMenu;
+        private System.Windows.Forms.ToolStripMenuItem enableDisableRowToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem javascriptSubstitutionToolStripMenuItem;
     }
 }
 
