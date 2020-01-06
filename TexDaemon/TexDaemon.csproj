@@ -69,10 +69,6 @@
     <Reference Include="ExcelLibrary">
       <HintPath>thirdparty\ExcelLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="FastColoredTextBox">
-      <HintPath>..\FastColoredTextBox\bin\Release\FastColoredTextBox.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
     <Reference Include="Jint, Version=0.0.0.0, Culture=neutral, PublicKeyToken=2e92ba9c8d81157f, processorArchitecture=MSIL">
       <HintPath>..\packages\Jint.2.11.58\lib\net451\Jint.dll</HintPath>
     </Reference>
@@ -190,6 +186,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="daemon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FastColoredTextBox\FastColoredTextBox.csproj">
+      <Project>{6dd14a85-ccfc-4774-bd26-0f5772512319}</Project>
+      <Name>FastColoredTextBox</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
